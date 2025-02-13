@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سورة</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Amiri', serif;
+            text-align: center;
+            background-color: #000;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: #ffcc00;
+        }
+
+        .ayah {
+            font-size: 22px;
+            margin: 15px 0;
+            line-height: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ayah-number {
+            font-size: 20px;
+            color: #ffcc00;
+            margin-left: 10px; /* تغيير من right إلى left لنقل الترقيم لليسار */
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ffcc00;
+            color: black;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #e6b800;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="suraName"></h1>
+        <div id="ayahs"></div>
+        <a href="index.html" class="back-btn">العودة إلى القائمة</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const suraNumber = urlParams.get("sura");
+
+        const suraNames = [
+            "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة",
+            "يونس", "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
+            "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت",
+            "الروم", "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+            "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات",
+            "ق", "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة",
+            "الحشر", "الممتحنة", "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم",
+            "الملك", "القلم", "الحاقة", "المعارج", "نوح", "الجن", "المزمل", "المدثر", "القيامة",
+            "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس", "التكوير", "الإنفطار", "المطففين",
+            "الإنشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد", "الشمس",
+            "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
+            "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر",
+            "الكافرون", "النصر", "المسد", "الإخلاص", "الفلق", "الناس"
+        ];
+
+        if (suraNumber && suraNumber >= 1 && suraNumber <= 114) {
+            document.getElementById("suraName").innerText = "سورة " + suraNames[suraNumber - 1];
+
+            fetch(`https://api.alquran.cloud/v1/surah/${suraNumber}/ar.alafasy`)
+                .then(response => response.json())
+                .then(data => {
+                    const ayahsContainer = document.getElementById("ayahs");
+                    data.data.ayahs.forEach(ayah => {
+                        const ayahDiv = document.createElement("div");
+                        ayahDiv.className = "ayah";
+
+                        const ayahTextSpan = document.createElement("span");
+                        ayahTextSpan.innerText = ayah.text;
+
+                        const ayahNumberSpan = document.createElement("span");
+                        ayahNumberSpan.className = "ayah-number";
+                        ayahNumberSpan.innerText = `(${ayah.numberInSurah}) `;
+
+                        ayahDiv.appendChild(ayahTextSpan);
+                        ayahDiv.appendChild(ayahNumberSpan);
+                        ayahsContainer.appendChild(ayahDiv);
+                    });
+                })
+                .catch(error => console.error("حدث خطأ في جلب الآيات", error));
+        } else {
+            document.getElementById("suraName").innerText = "سورة غير موجودة";
+        }
+    </script>
+
+</body>
+</html>
